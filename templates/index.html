@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Movie Recommender</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">  
+  </script>  
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">  
+  </script>  
+  
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"
+      rel="stylesheet" type="text/css" /> 
+</head>
+
+<body>
+  <div class="movie">
+    <h2><u>Movie Recommendation System</u></h2>
+    <form action="{{ url_for('main') }}" name="myform" method="POST"  >
+      <input type="text" id="tags" name="movie_name" placeholder="Enter a full movie name" required />
+      <input type="submit" id="submission_button" value="Submit" />
+    </form>
+  </div>
+ 
+  <script>
+$( function() {
+  var availableTags =
+   [
+      {% for i in tittle_suggest %}
+         "{{i}}".replace("&#39;","'"),
+      {% endfor %}
+  ];
+  $( "#tags" ).autocomplete({
+    source: availableTags
+  });
+} );
+</script>
+</body>
+
+</html>
