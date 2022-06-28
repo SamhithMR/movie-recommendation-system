@@ -3,6 +3,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 import numpy as np
+import flask
+import difflib
+
+app = flask.Flask(__name__, template_folder='templates')
 
 # Step 1: Perform Exploratory Data Analysis (EDA) on the data
 
@@ -121,6 +125,26 @@ def get_recommendations(title, cosine_sim=cosine_sim2):
     # return movies
 
 
-moviename ="the pink panther"
-print(*get_recommendations(moviename, cosine_sim2),sep="\n")
+# moviename = "pirates of the caribbean: at world's end"
+# print(get_recommendations(moviename, cosine_sim2))
 
+#step 4: Send and recive data to webpage through falsk
+@app.route('/', methods=['GET', 'POST'])
+def main():
+    #get method to get the input from the brower
+    if flask.request.method == 'GET':
+        return(flask.render_template('index.html', tittle_suggest=all_tittle))
+    #post method to send data to the brower
+    if flask.request.method == 'POST':
+        m_name = flask.request.form['movie_name']
+        m_name = m_name.lower()
+        if m_name not in all_tittle:
+             suggests = difflib.get_close_matches(m_name, all_tittle, n=7, cutoff=0.2)
+             return(flask.render_template('negative.html', suggest=suggests, name=m_name))
+           
+        else:
+            result_final = get_recommendations(m_name, cosine_sim2)
+            return flask.render_template('positive.html', movie_names=result_final, search_name=m_name)
+
+if __name__ == '__main__':
+    app.run(debug=True)
